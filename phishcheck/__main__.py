@@ -1,35 +1,67 @@
-"""Entry point: `python -m phishcheck <file.eml>`. For now, shows what was parsed."""
+"""Command-line interface: `python -m phishcheck <file.eml> [more.eml ...]`."""
 
+import argparse
+import json
 import sys
+from dataclasses import asdict
 from pathlib import Path
 
+from .checks import analyse, verdict
 from .parser import parse_eml
 
 
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="phishcheck",
+        description="Score raw .eml emails for signs of phishing.",
+    )
+    parser.add_argument("emails", nargs="+", type=Path, help="one or more .eml files")
+    parser.add_argument(
+        "--format", choices=["text", "json"], default="text",
+        help="output format (default: text)",
+    )
+    return parser
+
+
+def analyse_file(path: Path) -> dict:
+    email = parse_eml(path)
+    findings = analyse(email)
+    score = sum(f.score for f in findings)
+    return {
+        "file": str(path),
+        "subject": email.subject,
+        "from": f"{email.from_display} <{email.from_address}>",
+        "score": score,
+        "verdict": verdict(score),
+        "findings": [asdict(f) for f in sorted(findings, key=lambda f: -f.score)],
+        "attachments": [asdict(a) for a in email.attachments],
+    }
+
+
+def print_text(result: dict) -> None:
+    print(f"{result['verdict']}  (score {result['score']})  {result['file']}")
+    print(f"  From    : {result['from']}")
+    print(f"  Subject : {result['subject']}")
+    for f in result["findings"]:
+        tag = f"  [{f['mitre'].split()[0]}]" if f["mitre"] else ""
+        print(f"  +{f['score']:<2} {f['description']}{tag}")
+    print()
+
+
 def main() -> int:
-    if len(sys.argv) != 2:
-        print("usage: python -m phishcheck <path-to-email.eml>")
+    args = build_parser().parse_args()
+
+    missing = [p for p in args.emails if not p.is_file()]
+    if missing:
+        print(f"error: file not found: {missing[0]}", file=sys.stderr)
         return 1
 
-    email = parse_eml(Path(sys.argv[1]))
-
-    print(f"Subject     : {email.subject}")
-    print(f"From        : {email.from_display} <{email.from_address}>")
-    print(f"Reply-To    : {email.reply_to or '-'}")
-    print(f"Return-Path : {email.return_path or '-'}")
-    auth = ", ".join(f"{k.upper()}={v}" for k, v in email.auth_results.items())
-    print(f"Auth        : {auth}")
-    print(f"Relay hops  : {email.received_hops}")
-
-    print(f"\nLinks ({len(email.links)}):")
-    for link in email.links:
-        shown = f'  text "{link.text}"' if link.text else ""
-        print(f"  {link.url}{shown}")
-
-    print(f"\nAttachments ({len(email.attachments)}):")
-    for a in email.attachments:
-        print(f"  {a.filename}  {a.content_type}  {a.size} bytes")
-        print(f"    sha256 {a.sha256}")
+    results = [analyse_file(path) for path in args.emails]
+    if args.format == "json":
+        print(json.dumps(results, indent=2))
+    else:
+        for result in results:
+            print_text(result)
     return 0
 
 

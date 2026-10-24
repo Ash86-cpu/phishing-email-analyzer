@@ -1,0 +1,22 @@
+Received: from out-7.mailservice.example (out-7.mailservice.example
+ [198.51.100.140]) by mx.mail.example with ESMTPS id 2D9F; Thu, 22 Oct 2026
+ 14:30:02 +0000
+Authentication-Results: mx.mail.example; spf=pass
+ smtp.mailfrom=mailservice.example; dkim=pass header.d=northwindbank.example;
+ dmarc=pass header.from=northwindbank.example
+Return-Path: <bounces+8812@mailservice.example>
+From: "Northwind Bank" <news@northwindbank.example>
+To: ashish@mail.example
+Subject: 5 ways to save more this winter
+Date: Thu, 22 Oct 2026 14:30:00 +0000
+Message-ID: <news-20261022@mailservice.example>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+
+Hello,
+
+Our winter savings guide is here. Read it at https://bit.ly/nwb-winter-guide
+
+Northwind Bank
+To unsubscribe, reply with UNSUBSCRIBE.
