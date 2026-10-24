@@ -62,12 +62,18 @@ class _TextExtractor(HTMLParser):
 def parse_auth_results(message: EmailMessage) -> Dict[str, str]:
     """Read SPF/DKIM/DMARC verdicts that the receiving mail server recorded.
 
-    We trust only the receiving server's verdict here; we don't redo the DNS
-    lookups ourselves. A missing result is reported as "none".
+    Only the TOPMOST Authentication-Results header is used. Each server that
+    handles a message adds its header above the existing ones, so the top one
+    was written by the final receiving server. Any header further down could
+    have been written by the sender, and an attacker can simply include a fake
+    "spf=pass dkim=pass dmarc=pass" header in a phishing email.
+
+    We don't redo the DNS lookups ourselves. A missing result is "none".
     """
     results = {"spf": "none", "dkim": "none", "dmarc": "none"}
-    for header in message.get_all("Authentication-Results", []):
-        for mechanism, verdict in AUTH_PATTERN.findall(str(header)):
+    headers = message.get_all("Authentication-Results", [])
+    if headers:
+        for mechanism, verdict in AUTH_PATTERN.findall(str(headers[0])):
             results[mechanism.lower()] = verdict.lower()
     return results
 

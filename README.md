@@ -126,7 +126,7 @@ pip install -r requirements-dev.txt
 python -m pytest -v
 ```
 
-28 tests cover the parser, every check and the verdicts on all four samples.
+29 tests cover the parser, every check and the verdicts on all four samples.
 Each check is tested both ways: that it fires on the phishing pattern, and that
 it stays quiet on the ordinary version (a reply address on the sender's own
 subdomain, link text that just says "Click here", a document named
@@ -137,8 +137,10 @@ subdomain, link text that just says "Click here", a document named
 
 This is a learning project and a triage aid, not a mail filter. Known gaps:
 
-- It trusts the `Authentication-Results` header. On a server that does not
-  strip incoming copies of that header, an attacker could forge it.
+- It trusts the topmost `Authentication-Results` header, the one written by the
+  receiving server, and ignores any lower down (which a sender could forge).
+  A production tool would also check that header's server name (its
+  `authserv-id`) against the organisation's own mail servers.
 - Domain comparison keeps the last two labels of a domain, which is wrong for
   suffixes like `.co.uk`. A production tool would use the Public Suffix List.
 - It does not detect lookalike domains that use ordinary letters

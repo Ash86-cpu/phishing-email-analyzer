@@ -69,3 +69,18 @@ def test_sample_phish_is_parsed():
     assert email.reply_to == "northwind.recovery.team@freemail.example"
     assert email.received_hops == 2
     assert email.auth_results["dmarc"] == "fail"
+
+
+def test_forged_auth_header_lower_down_is_ignored():
+    # The receiving server's verdict is the topmost header. A second header
+    # further down was planted by the sender and must not override it.
+    from email.message import EmailMessage
+    from phishcheck.parser import parse_message
+
+    message = EmailMessage()
+    message["Authentication-Results"] = "mx.real; spf=fail; dkim=none; dmarc=fail"
+    message["Authentication-Results"] = "mx.fake; spf=pass; dkim=pass; dmarc=pass"
+    message["From"] = "a@b.example"
+    message.set_content("hi")
+
+    assert parse_message(message).auth_results == {"spf": "fail", "dkim": "none", "dmarc": "fail"}
