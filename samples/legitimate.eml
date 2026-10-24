@@ -1,0 +1,37 @@
+Received: from mx1.northwindbank.example (mx1.northwindbank.example
+ [198.51.100.25]) by mx.mail.example with ESMTPS id 4F2A; Mon, 19 Oct 2026
+ 08:02:12 +0000
+Authentication-Results: mx.mail.example; spf=pass
+ smtp.mailfrom=northwindbank.example; dkim=pass
+ header.d=northwindbank.example; dmarc=pass header.from=northwindbank.example
+From: "Northwind Bank" <statements@northwindbank.example>
+To: ashish@mail.example
+Subject: Your October statement is ready
+Date: Mon, 19 Oct 2026 08:02:11 +0000
+Message-ID: <stmt-20261019-8812@northwindbank.example>
+Return-Path: <bounces@northwindbank.example>
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="===============6332222669695900232=="
+
+--===============6332222669695900232==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+Hello,
+
+Your October statement is now available in online banking.
+View it at https://www.northwindbank.example/statements
+
+Northwind Bank
+
+--===============6332222669695900232==
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+<html><body><p>Hello,</p><p>Your October statement is now available in online=
+ banking.</p><p><a href=3D"https://www.northwindbank.example/statements">View=
+ your statement</a></p><p>Northwind Bank</p></body></html>
+
+--===============6332222669695900232==--

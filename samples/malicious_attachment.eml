@@ -1,0 +1,45 @@
+Received: from smtp.cheap-relay.example (smtp.cheap-relay.example
+ [192.0.2.77]) by mx.mail.example with ESMTP id 7B3D; Wed, 21 Oct 2026
+ 06:15:41 +0000
+Authentication-Results: mx.mail.example; spf=softfail
+ smtp.mailfrom=cheap-relay.example; dkim=pass header.d=cheap-relay.example;
+ dmarc=fail header.from=supplier-invoices.example
+From: "Accounts Payable" <ap@supplier-invoices.example>
+To: ashish@mail.example
+Subject: Overdue invoice 10442 - payment required today
+Date: Wed, 21 Oct 2026 06:15:40 +0000
+Message-ID: <inv10442@smtp.cheap-relay.example>
+Return-Path: <ap@supplier-invoices.example>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============2002145766646773266=="
+
+--===============2002145766646773266==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hello,
+
+Invoice 10442 is overdue. Please review the attached invoice and arrange paym=
+ent today to avoid late fees.
+
+Accounts Payable
+
+--===============2002145766646773266==
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="Invoice_10442.pdf.exe"
+MIME-Version: 1.0
+
+SEFSTUxFU1MgVEVTVCBGSUxFIGZvciBwaGlzaGluZy1lbWFpbC1hbmFseXplci4gVGhpcyBpcyBw
+bGFpbiB0ZXh0LCBub3QgYSByZWFsIGV4ZWN1dGFibGUuCg==
+
+--===============2002145766646773266==
+Content-Type: text/html
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="remittance_advice.html"
+MIME-Version: 1.0
+
+PGh0bWw+PGJvZHk+PHA+SEFSTUxFU1MgVEVTVCBGSUxFOiBwbGFjZWhvbGRlciByZW1pdHRhbmNl
+IHBhZ2UuPC9wPjwvYm9keT48L2h0bWw+Cg==
+
+--===============2002145766646773266==--
